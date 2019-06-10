@@ -1,0 +1,119 @@
+body{
+    color: black;
+}
+.btn-primary{
+    background-color: #70266e !important;
+    border-color: #70266e !important;
+}
+.toatau{
+    border:1px solid  #e5e5e5; 
+    text-align: center;
+    border-radius: 2px; 
+    cursor: pointer; 
+    width: 50px; 
+    height: 50px; 
+    margin-bottom: 15px
+}
+
+.toatau-select, .toatau:hover{
+    background-color: #ffc432; 
+}
+
+.ghichu{
+    border: #e5e5e5 solid 1px;
+    border-radius: 2px;
+    padding-top: 5px;
+    
+}
+.tinhtrang{
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border: #e5e5e5 solid 1px;
+    border-radius: 2px;
+}
+
+.tinhtrang-daban{
+    background-color: red;
+}
+.tinhtrang-dangchon{
+    background-color: chartreuse;
+}
+.seat{
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border: #e5e5e5 solid 1px;
+    border-radius: 2px;
+    margin: 5px;
+    text-align: center;
+    cursor: pointer;
+    
+}
+.seat span{
+    position: relative;
+    top:4px;
+}
+.seat-daban{
+    background-color: red; 
+    color: white;   
+}
+.seat-dangchon{
+    background-color: chartreuse;
+}
+.mid{
+    display: inline-block;
+    width: 30px;
+    height: 30px; 
+}
+.scroll{
+    height:calc(100% - 125px);
+    overflow-y: scroll;
+}
+.infor{
+    margin: 0px;
+    font-size: 13px;
+    line-height: 14px;
+    font-style: italic;
+}
+/* Divider Line */
+hr {
+	border: 0;
+	height: 1px;
+	background-image: -webkit-linear-gradient(left, transparent, rgba(0, 0, 0, 0.2), transparent);
+	background-image: -moz-linear-gradient(left, transparent, rgba(0, 0, 0, 0.2), transparent);
+	background-image: -ms-linear-gradient(left, transparent, rgba(0, 0, 0, 0.2), transparent);
+	background-image: -o-linear-gradient(left, transparent, rgba(0, 0, 0, 0.2), transparent);
+	margin: 0 !important;
+}
+
+
+#cart{
+    background-color: beige;
+    
+    float: right;
+    border: #e5e5e5 solid 1px;
+    border-radius: 2px; 
+    
+}
+
+#m-target-2{
+    padding: 0px;
+    z-index: 99999;
+    position: absolute;
+    width: 300px;
+    top: 137px;
+    left: 1210px;
+    
+}
+
+#amount{
+    position: relative;
+    top: -11px;
+    left: -13px;
+    background-color: red;
+    border-radius:50%;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+}

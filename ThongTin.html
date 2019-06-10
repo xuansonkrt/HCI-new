@@ -1,0 +1,1737 @@
+<!DOCTYPE html>
+<html lang="vi" cversion="1.0.29">
+
+<head>
+    <!-- Standard meta tags -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+    <meta name="description"
+        content="Tìm vé tàu, đặt vé tàu trực tuyến, mua vé tàu trực tuyến, tra cứu thông tin hành trình về giờ tàu và giá vé, tra cứu lại thông tin vé đã đặt">
+    <meta name="author" content="Tổng công ty đường sắt Việt Nam">
+
+    <!-- Site title -->
+    <title>Tương tác người máy - Nhóm 6: Hệ thống đặt vé tàu trực tuyến</title>
+
+    <!-- compiled CSS -->
+
+    <link rel='stylesheet' media='screen and (min-width: 912px)' href="/Contents/bootstrap-cerulean.min.css" />
+    <link rel="stylesheet" type="text/css" href="/Contents/ETicket-1.0.29.css" />
+    <link rel='stylesheet' media='screen and (max-width: 911px)' href="/Contents/bootstrap.min.css" />
+    <link rel='stylesheet' type="text/css" href="/Contents/bootstrap.min-2.css" />
+    <!--<link rel='stylesheet' media='screen and (max-width: 911px)' href="/content/site-mobile.css" />-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+        integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
+    <style>
+        @media (min-width: 1286px) {
+            .adv-left {
+                float: left;
+                display: block;
+                position: fixed;
+                top: 146px;
+                left: calc(50% - 629px);
+                left: -webkit-calccalc(50% - 629px);
+                left: -moz-calc(50% - 629px);
+            }
+
+            .adv-right {
+                float: right;
+                display: block;
+                position: fixed;
+                top: 146px;
+                right: calc(50% - 629px);
+                right: -webkit-calccalc(50% - 629px);
+                right: -moz-calc(50% - 629px);
+            }
+        }
+
+        @media (max-width: 1286px) {
+            .adv-left {
+                display: none;
+            }
+
+            .adv-right {
+                display: none;
+            }
+        }
+    </style>
+    <script type="text/javascript">
+
+        var abp = abp || {};
+        abp.appPath = '/';
+    </script>
+    <!-- Google Tag Manager -->
+    <script>
+        (function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    '/Contents/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-M5KLS6');</script>
+    <!-- End Google Tag Manager -->
+
+    <style>
+        .navbar-toggle {
+            margin-right: 28px;
+        }
+
+        .navbar {
+            margin-bottom: 5px;
+            margin: -0.5px -15px;
+        }
+
+        .navbar-brand {
+            padding: 15px 30px;
+        }
+
+        .navbar-nav>li>a {
+            padding-left: 30px;
+            color: white;
+        }
+
+        .navbar-default .navbar-brand {
+            color: white;
+        }
+
+        .navbar-default .navbar-nav>li>a {
+            color: #f1f1f1;
+            transition: 0.5s;
+        }
+
+        .navbar-default .navbar-nav>li:hover {
+            background-color: #79507a !important;
+        }
+
+        .navbar-nav {
+            margin: 0.5px -15px;
+        }
+
+        .navbar-default .navbar-toggle .icon-bar {
+            background-color: #f1f1f1;
+        }
+
+        .cart-item {
+            position: absolute;
+            right: 13px;
+            top: 30px;
+            background: #f89406;
+            color: #ffffff;
+            padding: 2px 5px;
+            display: inline-block;
+            border-radius: 16px;
+            font-size: 9px;
+            z-index: 1000;
+        }
+
+
+        .visible-xs {
+            display: block !important;
+        }
+    </style>
+
+    <link href="/Contents/widget.css" rel="stylesheet">
+    <style type="text/css">
+        BODY.modal-open {
+            overflow: hidden;
+        }
+
+        .wp-modal {
+            z-index: 10000;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.75);
+            overflow: auto;
+        }
+
+        .wp-modal>.wp-modal-wrapper-outer {
+            display: flex;
+            height: 100%;
+        }
+
+        .wp-modal>.wp-modal-wrapper-outer>.wp-modal-wrapper-inner {
+            margin: auto;
+            max-height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .wp-modal>.wp-modal-wrapper-outer>.wp-modal-wrapper-inner>.wp-modal-block {
+            display: flex;
+            flex-direction: column;
+            max-width: 30em;
+            max-height: 50em;
+            border: 1px solid #E0E0E0;
+            border-radius: 2px;
+            box-shadow: 0 0.2em 2em black;
+            background-color: #FFF;
+            color: #333;
+            margin: 1em;
+        }
+
+        .wp-modal-block>.wp-modal-title {
+            border-bottom: 2px solid #10ACFF;
+            color: #10ACFF;
+            padding: 0.7em 0.6em;
+            line-height: 1.2em;
+            font-size: 125%;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .wp-modal-title>.wp-modal-title-icon {
+            background-size: 2em 2em;
+            background-position: 50% 50%;
+            background-repeat: no-repeat;
+            width: 2em;
+            height: 2em;
+            flex-shrink: 0;
+            flex-grow: 0;
+            margin-right: 0.7em;
+        }
+
+        .wp-modal-title>.wp-modal-title-text {
+            flex-grow: 1;
+        }
+
+        wp-modal-block>.wp-modal-content {
+            overflow: auto;
+        }
+
+        .wp-modal-content>.wp-modal-text {
+            padding: 0.7em 0.6em;
+        }
+
+        .wp-modal-block>.wp-modal-buttons {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: row;
+            border-top: 1px solid #E0E0E0;
+        }
+
+        .wp-modal-buttons>.wp-modal-button {
+            flex: 1;
+            -moz-user-select: none;
+            border-right: 1px solid #E0E0E0;
+            cursor: pointer;
+            font-weight: normal;
+            line-height: 1.2em;
+            padding: 0.7em 0.6em;
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .wp-modal-buttons>.wp-modal-button:hover {
+            background-color: #f0f0f0;
+        }
+
+        .wp-modal-buttons>.wp-modal-button:last-child {
+            border-right: 0;
+        }
+
+        .wp-popup {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            font-family: arial;
+            text-align: center;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .wp-popup .wp-popup-content {
+            display: flex;
+            flex-flow: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            margin: 0 auto;
+            max-width: 350px;
+            min-width: 231px;
+        }
+
+        .wp-popup .wp-popup-title {
+            font: bold 18px arial;
+            margin-bottom: 12px;
+        }
+
+        .wp-popup .wp-popup-message {
+            font: 15px arial;
+            color: #777;
+            margin-bottom: 25px;
+        }
+
+        .wp-popup .wp-popup-example {
+            background-color: #fff;
+            height: 80px;
+            box-shadow: 0 0 20px #888888;
+            margin-bottom: 20px;
+            flex-flow: row nowrap;
+            display: flex;
+            align-self: stretch;
+        }
+
+        /* When used inside the notification example */
+        .wp-popup .wp-popup-example .wp-popup-icon {
+            flex-basis: 80px;
+            width: 80px;
+            height: 80px;
+            flex-grow: 0;
+            flex-shrink: 0;
+            background-color: #efefef;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: 50% 50%;
+        }
+
+        /* When used directly on the popup */
+        .wp-popup #logo.wp-popup-icon {
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: 50% 50%;
+        }
+
+        .wp-popup .wp-popup-example-text {
+            text-align: left;
+            flex: 1 auto;
+            padding: 10px 17px 8px 17px;
+            display: flex;
+            flex-flow: column nowrap;
+        }
+
+        .wp-popup .wp-popup-example-text>div {
+            flex: 0 auto;
+        }
+
+        .wp-popup .wp-popup-example-text .wp-popup-example-title {
+            font: 13px arial;
+            color: #3c3c3c;
+            margin-bottom: 5px;
+        }
+
+        .wp-popup .wp-popup-example-text .wp-popup-example-message {
+            flex-grow: 1;
+            font: 12px arial;
+            color: #3c3c3c;
+        }
+
+        .wp-popup .wp-popup-example-text .wp-popup-example-url {
+            font: 10px arial;
+            color: #9d9d9d;
+        }
+
+        .wp-popup .wp-popup-disclaimer {
+            font: 10px arial;
+            font-style: italic;
+            color: #b0b0b0;
+        }
+    </style>
+    <link rel="manifest" href="https://cdn.by.wonderpush.com/sdk/1.1.1.3/wonderpush-manifest.json">
+    <style type="text/css">
+        .wp-switch {
+            position: relative;
+            display: inline-block;
+            vertical-align: middle;
+            width: auto;
+            height: auto;
+            padding: .2em;
+            border-radius: 1.25em;
+            box-shadow: inset 0 -1px rgba(0, 0, 0, .05), inset 0 1px 1px rgba(0, 0, 0, .05);
+            cursor: pointer;
+            background-image: linear-gradient(to bottom, rgba(0, 0, 0, .2), rgba(255, 255, 255, .3) 1.5em)
+        }
+
+        .wp-switch-input {
+            display: none
+        }
+
+        .wp-switch-label {
+            position: relative;
+            display: block;
+            height: 2em;
+            font-size: 60%;
+            text-transform: uppercase;
+            background: #eceeef;
+            border-radius: inherit;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, .12), inset 0 0 2px rgba(0, 0, 0, .15);
+            transition: .15s ease-out;
+            transition-property: opacity, background
+        }
+
+        .wp-switch-label:after,
+        .wp-switch-label:before {
+            line-height: 0;
+            clear: both;
+            transition: inherit;
+            white-space: nowrap;
+            display: inline-block
+        }
+
+        .wp-switch-label:before {
+            content: attr(data-off);
+            right: 1em;
+            color: #aaa;
+            text-shadow: 0 1px rgba(255, 255, 255, .5);
+            float: right;
+            margin-top: 1em;
+            margin-right: 1em;
+            margin-left: 2.5em
+        }
+
+        .wp-switch-label:after {
+            content: attr(data-on);
+            left: 1em;
+            color: #fff;
+            text-shadow: 0 1px rgba(0, 0, 0, .2);
+            opacity: 0;
+            float: left;
+            margin-top: 0;
+            margin-left: 1em;
+            margin-right: 2.5em
+        }
+
+        .wp-switch-input:checked~.wp-switch-label {
+            background: #47a8d8;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, .15), inset 0 0 3px rgba(0, 0, 0, .2)
+        }
+
+        .wp-switch-input:checked~.wp-switch-label:before {
+            opacity: 0
+        }
+
+        .wp-switch-input:checked~.wp-switch-label:after {
+            opacity: 1
+        }
+
+        .wp-switch-handle {
+            position: absolute;
+            top: .24em;
+            left: .24em;
+            width: 1.125em;
+            height: 1.125em;
+            background: #fff;
+            border-radius: 100%;
+            box-shadow: 1px 1px 5px rgba(0, 0, 0, .2);
+            background-image: linear-gradient(to bottom, #fff 40%, #f0f0f0);
+            transition: .15s ease-out;
+            transition-property: left, margin-left
+        }
+
+        .wp-switch-handle:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            margin: .1875em 0 0 .1875em;
+            width: .75em;
+            height: .75em;
+            background: #f9f9f9;
+            border-radius: 100%;
+            box-shadow: inset 0 1px rgba(0, 0, 0, .02);
+            background-image: linear-gradient(to bottom, #eee, #fff)
+        }
+
+        .wp-switch-input:checked~.wp-switch-handle {
+            left: 100%;
+            margin-left: -1.365em;
+            box-shadow: -1px 1px 5px rgba(0, 0, 0, .2)
+        }
+
+        .wp-switch-input:disabled~.wp-switch-handle {
+            background-image: linear-gradient(to bottom, silver 40%, grey)
+        }
+
+        .wp-switch-input:disabled~.wp-switch-handle:before {
+            background: #b0b0b0
+        }
+
+        .wp-switch-input:disabled~.wp-switch-label {
+            background: silver
+        }
+
+        .wp-switch-input:disabled~.wp-switch-label:before {
+            color: #eee
+        }
+
+        .wp-switch-off-gray>.wp-switch-label {
+            background: #eceeef
+        }
+
+        .wp-switch-off-gray>.wp-switch-label:before {
+            color: #aaa;
+            text-shadow: 0 1px rgba(255, 255, 255, .5)
+        }
+
+        .wp-switch-off-grey>.wp-switch-label {
+            background: #eceeef
+        }
+
+        .wp-switch-off-grey>.wp-switch-label:before {
+            color: #aaa;
+            text-shadow: 0 1px rgba(255, 255, 255, .5)
+        }
+
+        .wp-switch-off-red>.wp-switch-label {
+            background: #ed2121
+        }
+
+        .wp-switch-off-red>.wp-switch-label:before {
+            color: #fff;
+            text-shadow: 0 1px rgba(0, 0, 0, .2)
+        }
+
+        .wp-switch-on-green>.wp-switch-input:checked~.wp-switch-label {
+            background: #4fb845;
+            text-shadow: 0 1px rgba(0, 0, 0, .2)
+        }
+
+        .wp-switch-on-blue>.wp-switch-input:checked~.wp-switch-label {
+            background: #47a8d8;
+            text-shadow: 0 1px rgba(0, 0, 0, .2)
+        }
+    </style>
+    <link href="/Contents/css" rel="stylesheet">
+    <link href="/Contents/sonnx-style.css" rel="stylesheet">
+    <script src="/Contents/jquery-1.10.2.js"></script>
+</head>
+
+<body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M5KLS6" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <div ng-app="app" class="super-container" ng-cloak>
+        <div id="menu-fixed">
+            <div class="visible-print">
+                <h3 style="border-bottom: solid 1px #ccc;padding-bottom: 6px;margin-bottom: -20px;">Tổng công ty Đường
+                    sắt Việt Nam</h3>
+            </div>
+            <div class="et-banner hidden-print">
+                <div class="container et-banner" style="max-width:1024px;">
+                    <div class="pull-left banner-logo">
+                        <div class="pull-left banner-logo"><img src="/Contents/LOGO_n.png" /></div>
+                        <div class="pull-left" id="bannerDate"></div>
+                    </div>
+                    <div class="pull-right banner-language">
+                        <div class="text-right" ng-show="!bannerTet">
+                            <!--<a href="javascript:;" translation-lang="en"><img src="/images/en-icon.png" width="20" height="20" /></a>
+                        <a href="javascript:;" translation-lang="vi"><img src="/images/vn-icon.gif" width="20" height="16" /></a>-->
+                        </div>
+                        <div class="text-right banner-logo-2" style="padding-top: 20px;"><img
+                                src="/Contents/fpt-logo2.png" width="60" height="60" /></div>
+                        <div class="text-right ticket-cart-number" style="padding-top: 6px; display:none;">
+                            <div et-ticket-cart-number></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container et-main-content" ng-show="bannerTet" ng-include="'app/tet/tet.html'"></div>
+        <div class="navbar-default bg-primary" role="navigation" ng-controller="app.controllers.layout.layout"
+            ng-show="!bannerTet" style="margin-top:10PX;">
+            <div class="container-fluid" style="background-color: #88218b">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target=".navbar-ex1-collapse" aria-expanded="false" id="buton-menu">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <!--<a class="navbar-brand" href="#">
+                    <span class="glyphicon glyphicon-home"></span>
+                </a>-->
+                </div>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse navbar-ex1-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navigation " id="nav">
+                        <li style="background-color: #88218b">
+                            <a href="formchin.html" style="color: white"> <i class="fa fa-home" aria-hidden="true"></i> </a>
+                        </li>
+                        <li class="myHover" style="background-color: #88218b; ">
+                            <a href="" style="color: white">TÌM KIẾM</a>
+                        </li>
+                        <li style="background-color: #88218b">
+                            <a href="" style="color: white">THÔNG TIN ĐẶT CHỖ</a>
+                        </li>
+                        <li style="background-color: #88218b">
+                            <a href="" style="color: white">GIỜ TÀU- GIÁ VÉ</a>
+                        </li>
+                        <li style="background-color: #88218b">
+                            <a href="" style="color: white">KIỂM TRA VÉ</a>
+                        </li>
+                        <li style="background-color: #88218b">
+                            <a href="khuyenmai_cacquydinh.html" style="color: white">KHUYẾN MÃI - CÁC QUY ĐỊNH</a>
+                        </li>
+                        <!-- <li style="background-color: #88218b">
+                            <a href="" style="color: white">CÁC QUY ĐỊNH</a>
+                        </li> -->
+                        <li style="background-color: #88218b">
+                            <a href="" style="color: white">HƯỚNG DẪN </a>
+                        </li>
+                        <li style="background-color: #88218b">
+                            <a href="" style="color: white">LIÊN HỆ </a>
+                        </li>
+                        <li style="background-color: #88218b">
+                            <!-- class="dropdown-toggle" -->
+                            <a href="" style="color: white" data-target="#m-target-2" data-toggle="dropdown"
+                                aria-haspopup="true" role="button" aria-expanded="false"><i class="fa fa-shopping-cart"
+                                    aria-hidden="true"></i> <span id="amount">2</span> </a>
+
+                        </li>
+                    </ul>
+                </div><!-- /.navbar-collapse -->
+            </div><!-- /.container-fluid -->
+            <!-- card -->
+            <div class="dropdown-menu" id="m-target-2" id="cart">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fa fa-shopping-cart" style="margin-right:10px"></i>Giỏ vé
+                    </div>
+                    <div class="card-body scroll" style="max-height: 400px;">
+                        <div class="row" style="margin: 0px">
+                            <div class="col-sm-9" style="padding: 10px">
+                                <p class="infor">SE7 Hà Nội - Sài Gòn</p>
+                                <p class="infor">06:00-06/06/2019</p>
+                                <p class="infor">Ngồi cứng toa 2 ghế 7</p>
+                                <p class="infor">Giá vé: 250.000đ</p>
+                            </div>
+                            <div class="col-sm-3" style="text-align: center; padding: 0px">
+                                <span class="infor">120</span>
+                                </br>
+                                <i class="fa fa-trash" style="cursor: pointer; color: red; font-size: 25px"
+                                    data-toggle="tooltip" data-placement="top" title="Hủy vé"></i>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row" style="margin: 0px">
+                            <div class="col-sm-9" style="padding: 10px">
+                                <p class="infor">SE7 Hà Nội - Sài Gòn</p>
+                                <p class="infor">06:00-06/06/2019</p>
+                                <p class="infor">Ngồi cứng toa 2 ghế 8</p>
+                                <p class="infor">Giá vé: 250.000đ</p>
+                            </div>
+                            <div class="col-sm-3" style="text-align: center; padding: 0px">
+                                <span class="infor">130</span>
+                                </br>
+                                <i class="fa fa-trash" style="cursor: pointer; color: red; font-size: 25px"
+                                    data-toggle="tooltip" data-placement="top" title="Hủy vé"></i>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="card-footer">
+                        <a href="ThongTin.html" type="button" class="btn btn-primary">Đặt ngay</a>
+                    </div>
+                </div>
+            </div>
+            <!-- end card -->
+        </div>
+
+        <div class="container-fluid" style="margin: 20px 0px">
+            <!-- Viet vao day -->
+            <!-- search -->
+            <div class="page-title-wrap">
+                <div class="container brief-search clearfix">
+                    <div class="sub-search-wrap col-sm-12">
+                        <form action="/vi-vn/train/booking/preparingresult" id="briefSearchForm_Train" method="post"
+                            novalidate="novalidate"><input autocomplete="off" class="SelectedCurrencyTrain"
+                                id="hdnSelectedCurrency_Train" name="SelectedCurrency" spellcheck="false" type="hidden"
+                                value="VND"><input autocomplete="off" data-val="true"
+                                data-val-required="The ProductType field is required." id="hdnProductType"
+                                name="ProductType" spellcheck="false" type="hidden" value="Train"><input
+                                autocomplete="off" data-val="true" data-val-number="The field Pax must be a number."
+                                id="hdnPax" name="Pax" spellcheck="false" type="hidden" value="1"><input
+                                autocomplete="off" data-val="true"
+                                data-val-number="The field InfantPax must be a number." id="hdnInfantPax"
+                                name="InfantPax" spellcheck="false" type="hidden" value="0"><input autocomplete="off"
+                                data-val="true" data-val-number="The field CompanyId must be a number."
+                                id="hdnCompanyId" name="CompanyId" spellcheck="false" type="hidden" value="">
+                            <div class="text-center row modify-link" style="display: none;">
+                                <a data-toggle="collapse" href="#modify-search" class="hidden-lg hidden-md hidden-sm"
+                                    style="color:#333;">Sửa đổi tìm kiếm <i class="fa fa-fw fa-angle-down"></i></a>
+                            </div>
+                            <!--For Chartering-->
+                            <!--For Kura-Kura Day Pass-->
+                            <div id="modify-search" class="row collapse">
+                                <div class="col-md-2 col-sm-3 col-option">
+                                    <div class="row">
+                                        <div class="col-sm-4 col-xs-2">
+                                            <div class="form-group">
+                                                <a href="/vi-vn/train">
+                                                    <img src="/images/icon-Train.png" class="icon">
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-8 col-xs-10 text13">
+                                            <div class="form-group">
+                                                <div class="radio-container">
+                                                    <label class="radio">
+                                                        <input data-product="Train" data-val="true"
+                                                            data-val-number="The field TripType must be a number."
+                                                            data-val-required="The TripType field is required."
+                                                            id="radioOneWay" name="TripType" type="radio" value="1">
+                                                        Một chiều
+                                                    </label>
+                                                    <label class="radio">
+                                                        <input checked="" data-product="Train" id="radioRoundTrip"
+                                                            name="TripType" type="radio" value="2">
+                                                        Khứ hồi
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2 col-route">
+                                    <div class="form-group">
+                                        <label for="exampleInputName6" class="control-label sr-only">Từ</label>
+                                        <div class="iconic-input">
+                                            <i class="fa fa-map-marker"></i>
+                                            <!-- <img class="loading-spinner" style="display: none;"
+                                                src="/images/icon-ajaxspinner.gif"> -->
+
+
+                                            <span class="twitter-typeahead"><input value="Hà Nội" autocomplete="off"
+                                                    class="form-control typeahead tt-input" id="txtSearchOrigin_Train"
+                                                    name="txtDisplaySearchOrigin_Train"
+                                                    placeholder="Nhà Tàu: Điểm Xuất Phát" spellcheck="false" type="text"
+                                                    dir="auto">
+                                                <pre aria-hidden="true"
+                                                    style="position: absolute; visibility: hidden; white-space: pre; font-family: Roboto, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 300; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre>
+                                                <div class="tt-menu"
+                                                    style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none;">
+                                                    <div class="tt-dataset tt-dataset-fromPlace"></div>
+                                                </div></span>
+                                            <input autocomplete="off" id="hdnOrigin_Train" name="Origin"
+                                                spellcheck="false" type="hidden" value="Hà Nội">
+                                            <input autocomplete="off" data-val="true"
+                                                data-val-number="The field FromCountryID must be a number."
+                                                data-val-required="The FromCountryID field is required."
+                                                id="hdnFC_Train" name="FromCountryID" spellcheck="false" type="hidden"
+                                                value="215">
+                                            <input autocomplete="off" data-val="true"
+                                                data-val-number="The field FromPlaceID must be a number."
+                                                data-val-required="The FromPlaceID field is required." id="hdnFP_Train"
+                                                name="FromPlaceID" spellcheck="false" type="hidden" value="1016">
+                                            <input autocomplete="off" data-val="true"
+                                                data-val-number="The field FromSubPlaceID must be a number."
+                                                id="hdnFSP_Train" name="FromSubPlaceID" spellcheck="false" type="hidden"
+                                                value="0">
+                                            <input autocomplete="off" id="hdnFPU_Train" name="FromPlaceUniqueShortName"
+                                                spellcheck="false" type="hidden" value="hanoi">
+                                            <input autocomplete="off" id="hdnFSPU_Train"
+                                                name="FromSubPlaceUniqueShortName" spellcheck="false" type="hidden"
+                                                value="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swap">
+                                    <div class="form-group">
+                                        <a><i class="fa icon-switch"></i></a>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2 col-route">
+                                    <div class="form-group">
+                                        <label for="exampleInputName6" class="control-label sr-only">Tới</label>
+                                        <div class="iconic-input">
+                                            <i class="fa fa-map-marker"></i>
+                                            <!-- <img class="loading-spinner" style="display: none;"
+                                                src="/images/icon-ajaxspinner.gif"> -->
+                                            <span class="twitter-typeahead"><input value="Đà Nẵng" autocomplete="off"
+                                                    class="form-control typeahead tt-input"
+                                                    id="txtSearchDestination_Train"
+                                                    name="txtDisplaySearchDestination_Train"
+                                                    placeholder="Nhà Tàu: Điểm Đến" spellcheck="false" type="text"
+                                                    dir="auto">
+                                                <pre aria-hidden="true"
+                                                    style="position: absolute; visibility: hidden; white-space: pre; font-family: Roboto, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 300; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre>
+                                                <div class="tt-menu"
+                                                    style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none;">
+                                                    <div class="tt-dataset tt-dataset-toPlace"></div>
+                                                </div></span>
+                                            <input autocomplete="off" id="hdnDestination_Train" name="Destination"
+                                                spellcheck="false" type="hidden" value="Đà Nẵng">
+                                            <input autocomplete="off" data-val="true"
+                                                data-val-number="The field ToCountryID must be a number."
+                                                data-val-required="The ToCountryID field is required." id="hdnTC_Train"
+                                                name="ToCountryID" spellcheck="false" type="hidden" value="215">
+                                            <input autocomplete="off" data-val="true"
+                                                data-val-number="The field ToPlaceID must be a number."
+                                                data-val-required="The ToPlaceID field is required." id="hdnTP_Train"
+                                                name="ToPlaceID" spellcheck="false" type="hidden" value="1020">
+                                            <input autocomplete="off" data-val="true"
+                                                data-val-number="The field ToSubPlaceID must be a number."
+                                                id="hdnTSP_Train" name="ToSubPlaceID" spellcheck="false" type="hidden"
+                                                value="0">
+                                            <input autocomplete="off" id="hdnTPU_Train" name="ToPlaceUniqueShortName"
+                                                spellcheck="false" type="hidden" value="danang">
+                                            <input autocomplete="off" id="hdnTSPU_Train"
+                                                name="ToSubPlaceUniqueShortName" spellcheck="false" type="hidden"
+                                                value="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2 col-date">
+                                    <div class="form-group">
+                                        <label for="exampleInputName6" class="control-label sr-only">Ngày khởi
+                                            hành</label>
+                                        <div class="iconic-input">
+                                            <i class="fa fa-calendar"></i>
+                                            <input value="2019-06-06" autocomplete="off" class="form-control datepicker"
+                                                data-val="true" data-val-date="The field DepartureDate must be a date."
+                                                id="dpDepartureDate_Train" name="DepartureDate" spellcheck="false"
+                                                type="text">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2 col-date">
+                                    <div class="form-group" id="dvReturnDate_Train">
+                                        <label for="exampleInputName6" class="control-label sr-only">Ngày về</label>
+                                        <div class="iconic-input">
+                                            <i class="fa fa-calendar"></i>
+                                            <input value="2019-06-07" autocomplete="off" class="form-control datepicker"
+                                                data-val="true" data-val-date="The field ReturnDate must be a date."
+                                                id="dpReturnDate_Train" name="ReturnDate" spellcheck="false"
+                                                type="text">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-1">
+                                    <div class="form-group">
+                                        <div class="search-btn">
+                                            <button class="btn btn-orange" type="submit" value="Submit">Tìm
+                                                Kiếm</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <span id="locationError_Train" class="help-block field-validation-error"></span>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- end search -->
+            <div class="container">
+                <div class="row m-t-5" style="margin-top: 20px">
+                    <div class="col-sm-4">
+                        <div class="card" hidden>
+                            <div class="card-header">
+                                Thông tin lịch trình
+                            </div>
+                            <div class="card-body">
+
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <!-- style="margin-top: 20px" -->
+                            <div class="card-header">
+                                Thông tin thanh toán
+                            </div>
+                            <div class="card-body">
+                                <div class="row" style="padding: 10px">
+                                    <div class="col-sm-5">Tiền vé:</div>
+                                    <div class="col-sm-7" style="text-align: right">
+                                        <i>500.000đ</i>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding: 10px">
+                                    <div class="col-sm-5">VAT(10%):</div>
+                                    <div class="col-sm-7" style="text-align: right">
+                                        <i>50.000đ</i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="row" style="padding: 10px">
+                                    <div class="col-sm-4"><strong>Tổng</strong></div>
+                                    <div class="col-sm-8" style="text-align: right">
+                                        <strong><i>550.000đ</i></strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-8">
+                       
+                        <div>
+                            <p>Thông tin vé 1</p>
+                            <div class="row" style=" border: #e5e5e5 solid 1px; margin: 0px;    border-radius: .25rem;">
+                                <div class="col-sm-7" style="padding: 10px">
+                                    <div class="row ">
+                                        <label for="" class="col-sm-4 ">Họ và tên <span
+                                                style="color: red">*</span></label>
+                                        <div class="col-sm-8 form-group">
+                                            <input type="text" class="form-control" placeholder="Họ và tên">
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <label for="" class="col-sm-4 ">Đối tượng <span
+                                                style="color: red">*</span></label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control">
+                                                <option value="" selected>Người lớn</option>
+                                                <option value="">Trẻ em</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row ">
+                                        <label for="" class="col-sm-4 ">Số CMND <span
+                                                style="color: red">*</span></label>
+                                        <div class="col-sm-8 form-group" style="margin-bottom: 0px">
+                                            <input type="text" class="form-control"
+                                                placeholder="Số chứng minh nhân dân">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-5 my-auto" style=" border-left: #e5e5e5 solid 1px;">
+                                    <div class="my-auto " style="height: 100%">
+                                        <div class="row" style="margin: 0px">
+                                            <div class="col-sm-9" style="padding: 10px">
+
+                                                <p class="infor">Khởi hành: <strong>Ga Hà Nội 06:00-06/06/2019</strong>
+                                                </p>
+                                                <p class="infor">Điểm đến: <strong>Ga Sài Gòn 16:00-06/06/2019</strong>
+                                                </p>
+                                                <p class="infor">Ngồi cứng toa 2 ghế 7</p>
+                                                <p class="infor">Giá vé: 250.000đ</p>
+
+                                            </div>
+                                            <div class="col-sm-3 my-auto" style="text-align: center; padding: 0px">
+                                                <span class="infor">130</span>
+                                                </br>
+                                                <i class="fa fa-trash"
+                                                    style="cursor: pointer; color: red; font-size: 25px"
+                                                    data-toggle="tooltip" data-placement="top" title="Hủy vé"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top:15px ">
+                            <p>Thông tin vé 2</p>
+                            <div class="row" style=" border: #e5e5e5 solid 1px; margin: 0px;    border-radius: .25rem;">
+                                <div class="col-sm-7" style="padding: 10px">
+                                    <div class="row ">
+                                        <label for="" class="col-sm-4 ">Họ và tên <span
+                                                style="color: red">*</span></label>
+                                        <div class="col-sm-8 form-group">
+                                            <input type="text" class="form-control" placeholder="Họ và tên">
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <label for="" class="col-sm-4 ">Đối tượng <span
+                                                style="color: red">*</span></label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control">
+                                                <option value="" selected>Người lớn</option>
+                                                <option value="">Trẻ em</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row ">
+                                        <label for="" class="col-sm-4 ">Số CMND <span
+                                                style="color: red">*</span></label>
+                                        <div class="col-sm-8 form-group" style="margin-bottom: 0px">
+                                            <input type="text" class="form-control"
+                                                placeholder="Số chứng minh nhân dân">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-5 my-auto" style=" border-left: #e5e5e5 solid 1px;">
+                                    <div class="my-auto " style="height: 100%">
+                                        <div class="row" style="margin: 0px">
+                                            <div class="col-sm-9" style="padding: 10px">
+
+                                                <p class="infor">Khởi hành: <strong>Ga Hà Nội 06:00-06/06/2019</strong>
+                                                </p>
+                                                <p class="infor">Điểm đến: <strong>Ga Sài Gòn 16:00-06/06/2019</strong>
+                                                </p>
+                                                <p class="infor">Ngồi cứng toa 2 ghế 8</p>
+                                                <p class="infor">Giá vé: 250.000đ</p>
+
+                                            </div>
+                                            <div class="col-sm-3 my-auto" style="text-align: center; padding: 0px">
+                                                <span class="infor">130</span>
+                                                </br>
+                                                <i class="fa fa-trash"
+                                                    style="cursor: pointer; color: red; font-size: 25px"
+                                                    data-toggle="tooltip" data-placement="top" title="Hủy vé"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top:15px ">
+                            <p>Thông tin người đặt vé</p>
+                            <div style="padding: 10px; border: #e5e5e5 solid 1px;    border-radius: .25rem;">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="row form-group">
+                                            <label for="" class="col-sm-4 ">Họ và tên <span
+                                                    style="color: red">*</span></label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" placeholder="Họ và tên">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="row form-group">
+                                            <label for="" class="col-sm-4 ">Giới tính <span style="color: red">*</span></label>
+                                            <div class="col-sm-8">
+                                                <input type="radio" name="gender" id="" checked> Nam
+                                                <input type="radio" name="gender" id="" style="margin-left:15px"> Nữ
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="row form-group">
+                                            <label for="" class="col-sm-4 ">Số CMND <span
+                                                    style="color: red">*</span></label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control"
+                                                    placeholder="Số chứng minh nhân dân">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="row form-group">
+                                            <label for="" class="col-sm-4 ">SĐT <span style="color: red">*</span> </label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" placeholder="Số điện thoại">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="row form-group">
+                                            <label for="" class="col-sm-4 ">Email <span style="color: red">*</span></label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" placeholder="Email">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="row form-group">
+                                            <label for="" class="col-sm-4 ">Địa chỉ</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" placeholder="Địa chỉ">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top:15px ">
+                            <p>Hình thức thanh toán</p>
+                            <div class="card" style="width: 100%;">
+                                <ul class="list-group list-group-flush" style="margin-bottom: 0px">
+                                    <li class="list-group-item">
+                                        <div class="col-sm-3">
+                                            <input type="radio" name="thanhtoan" id="">
+                                            <img src="/Contents/logo-dvtt-SML.png" alt="">
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <dl>
+                                                <dt>Thanh toán trực tuyến:</dt>
+                                                <dd class="infor">-Bằng thẻ nội địa, thẻ quốc tế qua cổng của công ty cổ
+                                                    phần thanh toán quốc gia Việt Nam - Napas</dd>
+                                            </dl>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <div class="col-sm-3">
+                                            <input type="radio" name="thanhtoan" id="" checked>
+                                            <img src="/Contents/logo-dvtt-PAYOO.png" alt="" style="width:119px">
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <dl>
+                                                <dt>Thanh toán trực tuyến qua cổng Payoo:</dt>
+                                                <dd class="infor">- Ví điện tử, thẻ nội địa, thẻ quốc tế qua cổng thanh
+                                                    toán Payoo</dd>
+                                            </dl>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <div class="col-sm-3">
+                                            <input type="radio" name="thanhtoan" id="">
+                                            <img src="/Contents/logo-dvtt-PayLater.png" alt="" style="width:119px">
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <dl>
+                                                <dt>Thanh toán trả sau bằng tiền mặt, internet banking tại các điểm giao
+                                                    dịch:</dt>
+                                                <dd class="infor">- Tại các nhà ga, các điểm bưu cục VNPost, ngân hàng
+                                                    VIB, Payoo,
+                                                    Internet Banking</dd>
+                                            </dl>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div style="margin-top:15px ">
+                            <a href="ChonCho.html" class="btn btn-primary" style="width: 115px"><i
+                                    class="fa fa-angle-double-left" style="margin-right: 10px; "></i>Trở lại</a>
+                            <a href="" data-toggle="modal" data-target="#exampleModal" class="btn btn-primary"
+                                style="width: 115px; float:right">Tiếp theo<i class="	fa fa-angle-double-right"
+                                    style="margin-left: 10px"></i></a>
+                        </div>
+
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Xác nhận thông tin</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div>
+                                            <span  style="margin-bottom: 0px">Thông tin người đặt vé</span>
+                                            <div class="row" style="padding-left: 20px;padding-right: 20px">
+                                                <div class="col-sm-6">
+                                                    Họ và tên: <strong>Nguyễn Xuân Sơn</strong>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    Giới tính: <strong>Nam</strong>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    Số CMND: <strong>12345678</strong>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    SĐT: <strong>0147852369</strong>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    Email: <strong>xuansonahihi@gmail.com</strong>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    Địa chỉ: <strong>Hưng Yên</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="margin-top: 15px">
+                                            Thông tin vé
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="text-align: center; width: 25px">STT</th>
+                                                        <th style="text-align: center">Hành khách</th>
+                                                        <th style="text-align: center">Lịch trình</th>
+                                                        <th style="text-align: center">Giá vé</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td style="text-align: center">1</td>
+                                                        <td>
+                                                            Họ và tên: <strong>Nguyễn Xuân Sơn</strong> <br>
+                                                            Đối tượng: <strong>Người lớn</strong> <br>
+                                                            Số CMND: <strong>12345678</strong>
+                                                        </td>
+                                                        <td>
+                                                            <p class="infor">Khởi hành: <strong>Ga Hà Nội
+                                                                    06:00-06/06/2019</strong>
+                                                            </p>
+                                                            <p class="infor">Điểm đến: <strong>Ga Sài Gòn
+                                                                    16:00-06/06/2019</strong>
+                                                            </p>
+                                                            <p class="infor">Ngồi cứng toa 2 ghế 7</p>
+                                                        </td>
+                                                        <td style="text-align: right">250.000đ</td>
+                                                    </tr>
+                                                    <tr>
+                                                            <td style="text-align: center">2</td>
+                                                            <td>
+                                                                Họ và tên: <strong>Nguyễn Nhật Minh</strong> <br>
+                                                                Đối tượng: <strong>Trẻ em</strong> <br>
+                                                                Số CMND: <strong>12345678</strong>
+                                                            </td>
+                                                            <td>
+                                                                <p class="infor">Khởi hành: <strong>Ga Hà Nội
+                                                                        06:00-06/06/2019</strong>
+                                                                </p>
+                                                                <p class="infor">Điểm đến: <strong>Ga Sài Gòn
+                                                                        16:00-06/06/2019</strong>
+                                                                </p>
+                                                                <p class="infor">Ngồi cứng toa 2 ghế 8</p>
+                                                            </td>
+                                                            <td style="text-align: right">250.000đ</td>
+                                                        </tr>
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td colspan="3">Thành tiền</td>
+                                                        <td style="text-align: right">500.000đ</td>
+                                                    </tr>
+                                                    <tr>
+                                                            <td colspan="3">VAT(10%)</td>
+                                                            <td style="text-align: right">50.000đ</td>
+                                                        </tr>
+                                                        <tr>
+                                                                <td colspan="3">Tổng</td>
+                                                                <td style="text-align: right">550.000đ</td>
+                                                            </tr>
+                                                    
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                        <div>
+                                            Hình thức thanh toán:
+                                            <strong>Thanh toán trực tuyến qua cổng Payoo</strong>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Sửa
+                                            lại</button>
+                                        <a href="HoanTat.html" type="button" class="btn btn-primary">Tiếp theo</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+            <!-- het  Viet vao day -->
+        </div>
+
+
+
+        <script src="/Contents/jqueryval"></script>
+
+
+        <script id="wonderpush-jssdk" src="/Contents/wonderpush.min.js.download"></script>
+        <script id="wonderpush-jssdk-loader" src="/Contents/wonderpush-loader.min.js.download"></script>
+        <script src="/Contents/inferredEvents.js.download" async=""></script>
+        <script src="/Contents/792797180857475" async=""></script>
+        <script async="" src="/Contents/fbevents.js.download"></script>
+        <script type="text/javascript" async="" src="/Contents/include.js.download"></script>
+        <script type="text/javascript" async="" src="/Contents/include.js.download"></script>
+        <script async="" src="/Contents/gtm.js.download"></script>
+        <script async="" src="/Contents/analytics.js.download"></script>
+        <script src="/Contents/modernizr"></script>
+
+        <script src="/Contents/jquery"></script>
+
+
+        <script src="/Contents/bootstrap"></script>
+        <script src="/Contents/bootstrap.js"></script>
+
+
+        <!-- <script src="/Contents/mix-rojak"></script> -->
+
+        <script src="/Contents/widget.js.download"></script>
+        <script src="/Contents/sonnx-script.js"></script>
+
+        <!-- compiled JavaScript -->
+        <script type="text/javascript" src="/Contents/ETicket-1.0.29.js.min.js"></script>
+        <script>
+            (function (i, s, o, g, r, a, m) {
+                i['GoogleAnalyticsObject'] = r;
+                i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+                a = s.createElement(o),
+                    m = s.getElementsByTagName(o)[0];
+                a.async = 1;
+                a.src = g;
+                m.parentNode.insertBefore(a, m)
+            })(window, document, 'script', '/Contents/analytics.js', 'ga');
+
+            ga('create', 'UA-7314325-29', 'auto');
+        //ga('send', 'pageview');
+
+        </script>
+
+</body>
+
+</html>
+
+<!-- Chat API thêm vào cuối code, Copy hết nhá -->
+
+<html>
+
+<head>
+    <meta charshet="utf-8" />
+
+    <!-- <link rel='stylesheet' media='screen and (min-width: 912px)' href="/Contents/bootstrap-cerulean.min.css" />
+    <link rel="stylesheet" type="text/css" href="/Contents/eticket-1.0.29.css" /> -->
+    <link rel="stylesheet" type="text/css" href="/css/subiz.css" />
+    <link rel="stylesheet" type="text/css" href="/css/roboto.css" />
+    <link rel='stylesheet' media='screen and (max-width: 911px)' href="/Contents/bootstrap.min.css" />
+
+</head>
+
+<body id="subiz_desktop">
+    <div id="subiz_right_bottom">
+        <div id="blocker"></div>
+
+        <div id="subiz_wrapper" class="subiz_wrapper_online">
+
+            <!-- <div id="subiz-bubble" style="display:inline">
+                <a href="javascript:;" id="bubble_close"><i class="subiz-bubble-close"></i></a>
+                <a href="javascript:;" id="bubble_image" class="bubbleimage"><img alt="bubble"></a>
+            </div> -->
+
+            <div id="button_compress" class="button_chat_online color_theme_default" onclick="openchat()" style="display: block;">
+                <div class="button_chat_online_logo">
+                    <i class="widget-sprites icon_subiz"></i>
+                </div>
+                <label class="button_chat_online_text">Trợ giúp!</label>
+                <div class="notice_new_message" style="display:inline"></div>
+            </div>
+
+            
+
+
+            <div id="widget_expand" class="widget_body color_theme_default" style="display: none">
+                <div class="online_heading" onclick="closechat()" style="display:block">
+                    <label id="online_hd" class="button_chat_offline_text">Chat với chúng tôi!</label>
+                    <label id="offline_hd" class="button_chat_offline_text" style="display:none">Để lại tin nhắn cho chúng tôi!</label>
+                <i class="fa fa-angle-down shrink_icon"></i>
+                </div>
+                <!-- <div class="offline_heading" onclick="closechat()" style="display:none">
+                    <label class="button_chat_offline_text">Để lại tin nhắn cho chúng tôi!</label>
+                    <i class="fa fa-angle-down shrink_icon"></i>
+                </div> -->
+                <div class="widget_body_inner">
+                    <!-- <div class="drag-container" id="drag-container" style="display:inline"></div>
+                    <div class="attach-confirm" id="attach_confirm" style="display: none">
+                        <h4>File được gửi</h4>
+                        <div class="sbz__list_file"></div>
+                        <p class="attach-action">
+                            <button class="btn-send-file color_theme_default" id="sbz__send_upload">Gửi</button>
+                            <a href="javascript:void(0);" id="sbz__cancel_upload" class="cancel-upload">Hủy</a>
+                        </p>
+                    </div> -->
+                    <!-- <div id="subiz_loading" class="bg-loading" style="display: inline;">
+                        <i class="img-loading"></i>
+                    </div> -->
+                    <div id="survey" style="display:block">
+                        <div class="survey_intro">
+                            <p>
+
+                            </p>
+                        </div>
+
+                        <div>
+                            <p>
+                                <input id="v_name_survey" type="text" class="text v_name" placeholder="Mời bạn nhập Tên" maxlength="100">
+                            </p>
+                            <p id="error_name_survey" style="display:none">
+                                <font class="text_warning">Vui lòng cho biết Tên</font>
+                            </p>
+                        </div>
+
+                        <div>
+                            <p>
+                                <input id="v_phone_survey" type="text" class="text v_phone" placeholder="Mời bạn nhập số điện thoại" maxlength="100">
+                            </p>
+                            <p id="error_phone_survey" style="display:none">
+                                <font class="text_warning">Vui lòng cho biết điện thoại của bạn</font>
+                            </p>
+                        </div>
+                        <div>
+                            <p>
+                                <font class="text_note">Đăng nhập bằng</font>
+                                <a class="login_facebook" href="JavaScript:newPopup('https://www.facebook.com/login.php?skip_api_login=1&api_key=521984397965108&kid_directed_site=0&app_id=521984397965108&signed_next=1&next=https%3A%2F%2Fwww.facebook.com%2Fdialog%2Foauth%3Fclient_id%3D521984397965108%26redirect_uri%3Dhttps%253A%252F%252Fstatic.subiz.com%252Foauth%252Ffacebook%26scope%3Demail%26display%3Dpopup%26state%3DaHR0cHM6Ly9kc3ZuLnZuLyMv%26ret%3Dlogin%26fallback_redirect_uri%3D6fc47291-c2e1-0149-afde-19d74a6d2cd8&cancel_url=https%3A%2F%2Fstatic.subiz.com%2Foauth%2Ffacebook%3Ferror%3Daccess_denied%26error_code%3D200%26error_description%3DPermissions%2Berror%26error_reason%3Duser_denied%26state%3DaHR0cHM6Ly9kc3ZuLnZuLyMv%23_%3D_&display=popup&locale=vi_VN')"><i class="fa fa-facebook-square"></i></a>
+                                <a class="login_google" href="JavaScript:newPopup('https://accounts.google.com/signin/oauth/identifier?client_id=76591952772-5m2c3058kt9g9d4oq0s2emm3nbodqtt9.apps.googleusercontent.com&as=TLMkQyt8xreUkk6I0tstZg&destination=https%3A%2F%2Fstatic.subiz.com&approval_state=!ChRyYjZzQy1xR3VrT19LdUJfNTBrNhIfTTg1c2laRW1zcUFVNEJxcmlYbTVkb21TTXFHbXN4WQ%E2%88%99AJDr988AAAAAXP3XJoZSLt4BAoZ34V0107MAc6dPyjhQ&oauthgdpr=1&xsrfsig=ChkAeAh8T_fMqzA-1EujJ4d5Xw8jIynR_t9OEg5hcHByb3ZhbF9zdGF0ZRILZGVzdGluYXRpb24SBXNvYWN1Eg9vYXV0aHJpc2t5c2NvcGU&flowName=GeneralOAuthFlow')"><i class="fa fa-google-plus-square"></i></a>
+                            </p>
+                        </div>
+
+                        <div class="survey_end">
+                            <p>
+                                <a class="btn_start_chat color_theme_default" onclick="startchat()" style="color: white">Bắt đầu trò chuyện</a>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div id="subiz_chat" style="padding: 0px; display: none;">
+                        <div class="widget_online_top">
+                            <div class="avatar_supporter">
+                                <img src="Contents/default_1506994469.jpg" alt="avatar">
+                            </div>
+                            <p>
+                                <font class="name_supporter">Tư vấn trực tuyến</font>
+                            </p>
+                            <p>
+                                <font class="text_supporter">Sẵn sàng hỗ trợ</font>
+                            </p>
+                            <p id="bl_rating">
+                                <a href="javascript:;" id="rate_good" class="rating_button" title="Đánh giá tốt">
+                                    <i class="fa fa-thumbs-up rate-good"></i>
+                                    <font>Tốt</font>
+                                </a>
+                                <a href="javascript:;" id="rate_bad" class="rating_button" title="Đánh giá không tốt">
+                                    <i class="fa fa-thumbs-down rate-bad"></i>
+                                </a>
+                            </p>
+                            <div class="logo_company" style="display:none">
+                                <img alt="logo">
+                            </div>
+                        </div>
+                        <div class="subiz_conversion">
+                            <div class="subiz_conversionin scroll">
+                                <div style="padding-top: 10px; display: none;" class="message_welcome">
+                                    <p>
+                                        Bạn có thắc mắc? Hãy chat với chúng tôi!
+                                    </p>
+                                </div>
+                                <div class="visitor_chat"><label class="name"><a href="javascript:;" class="visitor_name">Khắc Hoàn Nguyễn</a></label>
+                                    <div class="line_message received" id="c3dcdd6e-e134-48e9-863a-80843687e5f6"><span class="visitor_content_chat">Cho hỏi chuyến tàu mấy giờ</span></div>
+                                </div>
+                                <div class="text_notice_inline">Hiện tại nhân viên hỗ trợ của chúng tôi đang bận. Xin bạn vui lòng đợi trong giây lát. Cảm ơn vì thời gian của bạn.</div>
+                                <div class="text_notice_inline">Đường sắt Việt Nam03 đã tham gia.</div>
+                                <div class="supporter_chat"><label class="name">Đường sắt Việt Nam03</label>
+                                    <div class="line_message"><img src="/images/hoasao03_thumb-1421471230.jpg" alt="" class="avatar_small"><span class="supporter_content_chat">Dạ, ĐSVN 624 xin được hỗ trợ ạ !</span></div>
+                                </div>
+                                <div class="text_notice_inline">Kết thúc chat. <a href="javascript:;" class="link_chat_again">Bắt đầu cuộc trò chuyện mới</a></div>
+                                <div class="text_notice_inline">Lost connection! <a href="javascript:;" class="link_reconnect">Click here</a> to try reconnect.</div>
+                            </div>
+
+                            <!-- <div class="text_notice" style="display:none">{agent} đang trả lời...</div> -->
+                        </div>
+                        <div class="type_message">
+                            <p>
+                                <textarea placeholder="Nhập nội dung và ấn &quot;Enter&quot; để chat" rows="2" cols="20" id="textarea_online" class="textarea_online"></textarea>
+                            </p>
+                            <input type="file" name="file" id="file" class="inputfile" style="display:none"/>
+                            <i class="fa fa-paperclip attach sbz_upload_file" title="Upload file" onclick="$('.inputfile').trigger( 'click' )"></i>
+                            <!-- <button id="btnsend" class="btnsend color_theme_default" style="display:inline" style="color: white">Gửi</button> -->
+                            <input type="file" name="sbz_input_file" class="sbz_file_hide" multiple="multiple" id="sbz_file_hide" style="display:none">
+                        </div>
+                    </div>
+                    <div id="subiz_offline" style="display: none;">
+                        <div>
+                            <p>
+                                Hiện nay chúng tôi không ở đây, xin vui lòng để lại lời nhắn.
+                            </p>
+                        </div>
+                        <div style="display: block;">
+                            <p>
+                                <input type="text" class="text v_name" id="v_name_offline" placeholder="Xin mời nhập Họ tên" maxlength="100">
+                            </p>
+                            <p id="error_name_offline" style="display:none">
+                                <font class="text_warning">Xin vui lòng nhập tên của bạn</font>
+                            </p>
+                        </div>
+                        <div style="display: none;">
+                            <p>
+                                <input type="text" class="text v_email" id="v_email_offline" placeholder="Email (để tôi liên hệ với bạn)" maxlength="100">
+                            </p>
+                            <p id="error_email_offline" style="display:none">
+                                <font class="text_warning">Xin vui lòng nhập email</font>
+                            </p>
+                        </div>
+                        <div style="display: block;">
+                            <p>
+                                <input type="text" class="text v_phone" id="v_phone_offline" placeholder="Xin mời nhập số điện thoại" maxlength="100">
+                            </p>
+                            <p id="error_phone_offline" style="display:none">
+                                <font class="text_warning">Vui lòng nhập số điện thoại của bạn</font>
+                            </p>
+                        </div>
+
+                        <div id="department_edit" style="display: block;">
+                            <p>
+                                <select id="v_department_offline_edit">
+                                    
+                                <option value="">Chọn bộ phận hỗ trợ</option><option value="Cung cấp thông tin">Cung cấp thông tin</option><option value="Hướng dẫn quy trình đặt vé">Hướng dẫn quy trình đặt vé</option><option value="Hỗ trợ hệ thống, thanh toán">Hỗ trợ hệ thống, thanh toán</option></select>
+                            </p>
+                            <p id="error_department_edit_offline" style="display:none">
+                                <font class="text_warning">Chọn bộ phận hỗ trợ</font>
+                            </p>
+                        </div>
+
+                        <div>
+                            <p>
+                                <font class="text_note">Đăng nhập bằng</font>
+                                <a class="login_facebook" href="JavaScript:newPopup('https://www.facebook.com/login.php?skip_api_login=1&api_key=521984397965108&kid_directed_site=0&app_id=521984397965108&signed_next=1&next=https%3A%2F%2Fwww.facebook.com%2Fdialog%2Foauth%3Fclient_id%3D521984397965108%26redirect_uri%3Dhttps%253A%252F%252Fstatic.subiz.com%252Foauth%252Ffacebook%26scope%3Demail%26display%3Dpopup%26state%3DaHR0cHM6Ly9kc3ZuLnZuLyMv%26ret%3Dlogin%26fallback_redirect_uri%3D6fc47291-c2e1-0149-afde-19d74a6d2cd8&cancel_url=https%3A%2F%2Fstatic.subiz.com%2Foauth%2Ffacebook%3Ferror%3Daccess_denied%26error_code%3D200%26error_description%3DPermissions%2Berror%26error_reason%3Duser_denied%26state%3DaHR0cHM6Ly9kc3ZuLnZuLyMv%23_%3D_&display=popup&locale=vi_VN')"><i class="fa fa-facebook-square"></i></a>
+                                <a class="login_google" href="JavaScript:newPopup('https://accounts.google.com/signin/oauth/identifier?client_id=76591952772-5m2c3058kt9g9d4oq0s2emm3nbodqtt9.apps.googleusercontent.com&as=TLMkQyt8xreUkk6I0tstZg&destination=https%3A%2F%2Fstatic.subiz.com&approval_state=!ChRyYjZzQy1xR3VrT19LdUJfNTBrNhIfTTg1c2laRW1zcUFVNEJxcmlYbTVkb21TTXFHbXN4WQ%E2%88%99AJDr988AAAAAXP3XJoZSLt4BAoZ34V0107MAc6dPyjhQ&oauthgdpr=1&xsrfsig=ChkAeAh8T_fMqzA-1EujJ4d5Xw8jIynR_t9OEg5hcHByb3ZhbF9zdGF0ZRILZGVzdGluYXRpb24SBXNvYWN1Eg9vYXV0aHJpc2t5c2NvcGU&flowName=GeneralOAuthFlow')"><i class="fa fa-google-plus-square"></i></a>
+                            </p>
+                        </div>
+
+                        <div>
+                            <p>
+                                <textarea id="v_message_offline_edit" cols="20" rows="2" placeholder="Hãy gửi tin nhắn cho chúng tôi về vấn đề của bạn:" class="textarea_offline"></textarea>
+                            </p>
+                            <p id="error_message_edit_offline" style="display:none">
+                                <font class="text_warning">Mời bạn nhập câu hỏi</font>
+                            </p>
+                        </div>
+                        <div class="offline_end">
+                            <p>
+                                <a id="send_message_offline_edit" onclick="messsend()" class="btn_send_message color_theme_default" style="color: white">Gửi tin nhắn</a>
+                            </p>
+                        </div>
+                    </div>
+                    <div id="message_successful" style="display: none;">
+                        <div>
+                            <p>
+                                Cảm ơn đã gửi tin nhắn. Chúng tôi sẽ sớm hồi âm lại.
+                            </p>
+                        </div>
+                        <div>
+                            <p class="message_notice">
+                                <label class="top_notice">
+                                    <strong class="v_name_text">ffff</strong><br>
+                                    <font class="v_email_text">saitama@vcc.com</font>
+                                </label>
+                                <label id="message_offline_text" class="body_notice"></label>
+                            </p>
+                        </div>
+                        <div>
+                            <p>
+                                <a onclick="messsendother()" class="btn_send_another color_theme_default" style="color: white">Gửi tin nhắn khác</a>
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="widget_body_footer">
+                    <!-- <div id="twitter" style="display:inline">
+                        <a href="javascript:;" target="_blank"><i class="fa fa-twitter-square"></i></a>
+                    </div>
+                    <div id="facebook" style="display:inline">
+                        <a href="javascript:;" target="_blank"><i class="fa fa-facebook-square"></i></a>
+                    </div> -->
+
+                    <div id="btnoption" class="btnoption" onclick="openOption()" style="color: white"> 
+                        Cài đặt
+                    </div>
+                    <div class="btnendchat" id="end_chat_footer" style="display:none">| Kết thúc chat</div>
+                    <span class="option_form" id="option_form" style="display: none">
+                            <i id="close_option" class="fa fa-remove icon_close" onclick="closeOption()"></i>
+                            <span id="option_default" style="display: inline">
+                                <span class="option_config_sound">
+                                    <label class="nameconfig">Âm thanh</label>
+                                    <i class="fa icon_sound fa-volume-up">
+                                        <span class="fa fa-remove" style="display: none;"></span>
+                    </i>
+                    </span>
+                    <span class="option_config_line" style="display: inline-block;">
+                                    <a id="email_transcript" onclick="openemail()">Email transcript</a>
+                                    <i class="fa fa-envelope"></i>
+                                </span>
+                    <span class="option_config_line">
+                                    <a id="edit_contact" onclick="information()">Thông tin cá nhân</a>
+                                    <i class="fa fa-info"></i>
+                                </span>
+                    <span class="option_config_line" style="display: none;">
+                                    <a id="btn_endchat" class="btn_endchat color_theme_default" href="javascript:;">Kết thúc chat</a>
+                                </span>
+                    </span>
+                    <span id="option_contact_details" style="display: none">
+                                <span class="option_config_line">
+                                    <a class="login_facebook" href="JavaScript:newPopup('https://www.facebook.com/login.php?skip_api_login=1&api_key=521984397965108&kid_directed_site=0&app_id=521984397965108&signed_next=1&next=https%3A%2F%2Fwww.facebook.com%2Fdialog%2Foauth%3Fclient_id%3D521984397965108%26redirect_uri%3Dhttps%253A%252F%252Fstatic.subiz.com%252Foauth%252Ffacebook%26scope%3Demail%26display%3Dpopup%26state%3DaHR0cHM6Ly9kc3ZuLnZuLyMv%26ret%3Dlogin%26fallback_redirect_uri%3D6fc47291-c2e1-0149-afde-19d74a6d2cd8&cancel_url=https%3A%2F%2Fstatic.subiz.com%2Foauth%2Ffacebook%3Ferror%3Daccess_denied%26error_code%3D200%26error_description%3DPermissions%2Berror%26error_reason%3Duser_denied%26state%3DaHR0cHM6Ly9kc3ZuLnZuLyMv%23_%3D_&display=popup&locale=vi_VN')"><i class="fa fa-facebook-square"></i> Facebook</a>
+                                </span>
+                    <span class="option_config_line">
+                                    <a class="login_google" href="JavaScript:newPopup('https://accounts.google.com/signin/oauth/identifier?client_id=76591952772-5m2c3058kt9g9d4oq0s2emm3nbodqtt9.apps.googleusercontent.com&as=TLMkQyt8xreUkk6I0tstZg&destination=https%3A%2F%2Fstatic.subiz.com&approval_state=!ChRyYjZzQy1xR3VrT19LdUJfNTBrNhIfTTg1c2laRW1zcUFVNEJxcmlYbTVkb21TTXFHbXN4WQ%E2%88%99AJDr988AAAAAXP3XJoZSLt4BAoZ34V0107MAc6dPyjhQ&oauthgdpr=1&xsrfsig=ChkAeAh8T_fMqzA-1EujJ4d5Xw8jIynR_t9OEg5hcHByb3ZhbF9zdGF0ZRILZGVzdGluYXRpb24SBXNvYWN1Eg9vYXV0aHJpc2t5c2NvcGU&flowName=GeneralOAuthFlow')"><i class="fa fa-google-plus-square"></i> Google +</a>
+                                </span>
+                    <span class="option_config_line">
+                                    <a id="edit_contact_details" onclick="opencontactfm()">Tên và Email</a>
+                                </span>
+                    </span>
+                    <span id="option_contact_form" style="display: none">
+                                <span class="option_config_line"><label>Sửa thông tin</label></span>
+                    <span class="option_config_line">
+                                    <input type="text" placeholder="Họ tên" id="v_name_contact" class="text v_name" maxlength="100" value="Nguyễn Khắc Hoàn">
+                                </span>
+                    <span class="option_config_line">
+                                    <input type="text" placeholder="Địa chỉ email" id="v_email_contact" class="text v_email" maxlength="100" value="saitama@vcc.com">
+                                </span>
+                    <span class="option_config_line">
+                                    <a onclick="savecontactfm()" class="btn_endchat_small color_theme_default" id="edit_successful">Lưu</a> or <a onclick="closeOption()" id="cancel_contact">Hủy</a>
+                                </span>
+                    </span>
+                    <span id="option_email_transcript" style="display: none">
+                                <span class="option_config_line">
+                                    <label>Gửi transcript qua email</label>
+                                </span>
+                    <span class="option_config_line">
+                                    <input type="text" placeholder="saitama@vcc.com" id="v_email_transcript" class="text v_email" maxlength="100">
+                                </span>
+                    <span class="option_config_line">
+                                    <a class="btn_endchat_small color_theme_default" id="save_email_transcript" onclick="closeOption()" >Gửi</a> or <a href="javascript:;" id="cancel_email_transcript" onclick="closeOption()">Hủy</a>
+                                </span>
+                    </span>
+                    <span id="option_edit_successful" style="display: none;">
+                                    <span class="config_complete">
+                                        <strong class="v_name_text">Nguyễn Khắc Hoàn</strong><br>
+                                        <font class="v_email_text">saitama@vcc.com</font>
+                                        <a><i id="icon_edit_contact" class="fa fa-pencil icon_edit" onclick="opencontact()"></i></a>
+                                    </span>
+                    </span>
+
+                    </span>
+
+                    <span class="endchat_form">
+                        <span class="endchat_form_title">
+                            <span class="endchat_action">
+                                <a href="javascript:;" class="close_enchat_form" id="ec_close">Đóng cửa sổ chat</a>|<a href="javascript:;" id="ec_chat_again">Tiếp tục chat</a>
+                            </span>
+                    <span class="endchat_label"></span>
+                    </span>
+                    <span class="endchat_form_button">
+                            <a href="javascript:;" title="" class="btnvote" id="ec_rate_good">
+                                <i class="fa fa-thumbs-up rate-good"></i>Hài lòng
+                            </a>
+                            <a href="javascript:;" title="" class="btnvote" id="ec_rate_bad">
+                                <i class="fa fa-thumbs-down rate-bad"></i>Chưa hài lòng
+                            </a>
+                        </span>
+                    </span>
+
+                    <a id="offbt" target="_blank" style="display:block" onclick="offlinemod()">
+                        <i class="widget-sprites off_logo"></i>
+                    </a>
+                    <a id="onbt" target="_blank" style="display:none" onclick="onlinemod()">
+                        <i class="widget-sprites on_logo"></i>
+                    </a>
+
+                </div>
+            </div>
+            <audio id="audio_alert" src="/Contents/alert.ogg" preload="auto"></audio>
+        </div>
+    </div>
+
+    
+    <script>
+        function openchat() {
+            document.getElementById("button_compress").style.display = "none";
+            document.getElementById("widget_expand").style.display = "block";
+        }
+
+        function closechat() {
+            document.getElementById("button_compress").style.display = "block";
+            document.getElementById("widget_expand").style.display = "none";
+        }
+
+        function startchat() {
+            document.getElementById("survey").style.display = "none";
+            document.getElementById("subiz_chat").style.display = "block";
+
+        }
+
+        function openOption() {
+            document.getElementById("option_form").style.display = "inline";
+
+        }
+
+        function openemail() {
+            document.getElementById("option_default").style.display = "none";
+            document.getElementById("option_email_transcript").style.display = "inline";
+        }
+
+        function closeOption() {
+
+            document.getElementById("option_email_transcript").style.display = "none";
+            document.getElementById("option_default").style.display = "inline";
+            document.getElementById("option_edit_successful").style.display = "none";
+            document.getElementById("option_contact_details").style.display = "none";
+            document.getElementById("option_contact_form").style.display = "none";
+            document.getElementById("option_form").style.display = "none";
+
+
+        }
+
+        function information() {
+            document.getElementById("option_default").style.display = "none";
+            document.getElementById("option_edit_successful").style.display = "inline";
+        }
+
+        function opencontact() {
+            document.getElementById("option_edit_successful").style.display = "none";
+            document.getElementById("option_contact_details").style.display = "inline";
+        }
+
+        function opencontactfm() {
+
+            document.getElementById("option_contact_details").style.display = "none";
+            document.getElementById("option_contact_form").style.display = "inline";
+        }
+
+        function savecontactfm() {
+            document.getElementById("option_contact_form").style.display = "none";
+            document.getElementById("option_edit_successful").style.display = "inline";
+        }
+
+        function messsend() {
+            document.getElementById("subiz_offline").style.display = "none";
+            document.getElementById("message_successful").style.display = "block";
+        }
+
+        function messsendother() {
+            document.getElementById("subiz_offline").style.display = "block";
+            document.getElementById("message_successful").style.display = "none";
+        }
+
+        function offlinemod() {
+            document.getElementById("offline_hd").style.display = "block";
+            document.getElementById("online_hd").style.display = "none";
+       
+            document.getElementById("survey").style.display = "none";
+            document.getElementById("subiz_chat").style.display = "none";
+            document.getElementById("subiz_offline").style.display = "block";
+            document.getElementById("onbt").style.display = "block";
+            document.getElementById("offbt").style.display = "none";
+            document.getElementById("btnoption").style.display="none";
+            
+        }
+
+        function onlinemod() {
+            document.getElementById("offline_hd").style.display = "none";
+            document.getElementById("online_hd").style.display = "block";
+            document.getElementById("survey").style.display = "block";
+            
+            document.getElementById("subiz_offline").style.display = "none";
+            document.getElementById("message_successful").style.display = "none";
+
+            document.getElementById("offbt").style.display = "block";
+            document.getElementById("onbt").style.display = "none";
+            document.getElementById("btnoption").style.display="block";
+        }
+
+        function newPopup(url) {
+            popupWindow = window.open(
+                url, 'popUpWindow', 'height=500,width=500,left=450,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no,status=yes')
+        }
+    </script>
+    <!-- <script type="text/javascript" src="/Contents/ETicket-1.0.29.js.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.min.js"></script> -->
+
+</body>
+
+</html>

@@ -1,0 +1,202 @@
+@charset "utf-8";
+/* CSS Document */
+
+
+.bbp-topic-permalink:hover, .bbp-forum-title:hover{
+	color:#525252 !important;
+}
+
+.bbp-topic-permalink, .bbp-forum-title{
+	font-weight:bold;
+	color:#DA251C !important;
+}
+
+
+#pippin_login_form{
+	overflow:hidden;
+	float:left;
+	width: 390px;
+}
+#pippin_registration_form{
+	overflow:hidden;
+	float:left;
+	width:468px;
+}
+
+.pippin_form fieldset{
+	border:none;
+	float:left;
+	overflow:hidden;
+}
+
+.pippin_header{
+	display:none;
+}
+.enter{
+	float: left;
+    margin-left: 9px;
+    overflow: hidden;
+}
+.bbp-topics, .bbp-forums{
+	border:1px solid #818181 !important;
+}
+
+
+.entry-title{
+border-bottom: 2px solid #DA251C;
+    color: #6A6A6A;
+    padding-bottom: 3px;
+	margin-bottom: 10px;
+}
+
+
+
+
+#tabContaier{
+	background: none repeat scroll 0 0 #DA251C;
+	border: 1px solid #CCCCCC;
+
+	padding: 0;
+	position: relative;
+	width: 500px;
+	margin-top: 15px;
+}
+	
+#tabContaier ul{
+	overflow:hidden;
+	border-right:1px solid #fff;
+	height:35px;
+	position:absolute;
+	z-index:100;
+	}
+	
+#tabContaier li{
+	float:left;
+	list-style:none;}
+
+#tabContaier li a{
+	background:#ddd;
+	border:1px solid #fcfcfc;
+	border-right:0;
+	color:#333;
+	cursor:pointer;
+	display:block;
+	height: 18px;
+    line-height: 18px;
+	padding:0 30px;
+	text-decoration:none;
+	
+	font-size: 13px;
+	}
+	
+#tabContaier li a:hover{
+	background:#ccc;}
+	
+#tabContaier li a.active{
+	background:#fbfbfb;
+	border:1px solid #fff;
+	border-right:0;
+	color:#333;}
+	
+.tabDetails{
+	background: none repeat scroll 0 0 #FBFBFB;
+    border: 1px solid #FFFFFF;
+    margin: 20px 0 0;
+    overflow: hidden;
+	}
+	
+.tabContents{
+	padding:20px}
+	
+	
+	
+	
+/*Thêm css để hover nav bootstrap*/
+.dropdown:hover .dropdown-menu {
+display: block;
+}
+
+
+
+/*Thêm col 5*/
+.col-xs-15,
+.col-sm-15,
+.col-md-15,
+.col-lg-15 {
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+
+
+.col-xs-15 {
+    width: 20%;
+    float: left;
+}
+@media (min-width: 768px) {
+.col-sm-15 {
+        width: 20%;
+        float: left;
+    }
+}
+@media (min-width: 992px) {
+    .col-md-15 {
+        width: 20%;
+        float: left;
+    }
+}
+@media (min-width: 1200px) {
+    .col-lg-15 {
+        width: 20%;
+        float: left;
+    }
+}
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+/* code hien thi algin trong post */
+
+img.aligncenter
+{
+display: block;
+margin-left: auto;
+margin-right: auto;
+}
+
+img.alignright
+{
+padding: 4px;
+margin: 0 0 2px 7px;
+display: inline;
+}
+
+img.alignleft
+{
+padding: 4px;
+margin: 0 7px 2px 0;
+display: inline;
+}
+
+.alignright
+{
+float: right;
+}
+
+.alignleft
+{
+float: left;
+}
+
+/* end */	
