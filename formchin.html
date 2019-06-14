@@ -577,7 +577,7 @@
                 <div class="collapse navbar-collapse navbar-ex1-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav navigation " id="nav">
                         <li style="background-color: #88218b">
-                            <a href="#" style="color: white"> <i class="fa fa-home" aria-hidden="true"></i> </a>
+                            <a href="formchin.html" style="color: white"> <i class="fa fa-home" aria-hidden="true"></i> </a>
                         </li>
                         <li class="myHover" style="background-color: #88218b; ">
                             <a href="formchin.html" style="color: white">TÌM KIẾM</a>
@@ -674,14 +674,15 @@
                                 <div class="row et-widget-header"><img src="/images/widgetIcon.png"><span><strong
                                             class="ng-binding">Tìm kiếm hành trình</strong></span></div>
 
-                                <div class="et-direct-block"><input ng-model="searchData.isOneWay" type="radio"
+                                <div class="et-direct-block">
+                                    <input ng-model="searchData.isOneWay" type="radio"
                                         value="0" name="oneWay" class="ng-pristine ng-valid"><span
-                                        class="ng-binding">MỘT CHIỀU</span>
+                                        class="ng-binding" style="color: white; margin-right: 20px">MỘT CHIỀU</span>
                                     <input ng-model="searchData.isOneWay" type="radio" name="oneWay" value="1"
                                         ng-checked="searchData.isOneWay == 1" class="ng-pristine ng-valid"><span
-                                        class="ng-binding">KHỨ HỒI</span></div>
-                                <div class="col-md-3" ng-class="{'has-error': gaDiError}">
-                                    <h6 class="ng-binding">GA ĐI</h6>
+                                        class="ng-binding" style="color: white">KHỨ HỒI</span></div>
+                                <div class="col-md-3" ng-class="{'has-error': gaDiError}" style="margin-top:20px">
+                                    <h6 class="ng-binding" style="color: white; margin-bottom: 10px">GA ĐI</h6>
 
                                     <input type="text" class="form-control input-sm ng-pristine ng-valid"
                                         ng-model="searchData.tenGaDi" ng-change="verifyGa(searchData.tenGaDi, true)"
@@ -699,8 +700,8 @@
                                         <!-- ngRepeat: match in matches track by $index -->
                                     </ul>
                                 </div>
-                                <div class="col-md-3" ng-class="{'has-error': gaDenError}">
-                                    <h6 class="ng-binding">GA ĐẾN</h6> <input type="text"
+                                <div class="col-md-3" ng-class="{'has-error': gaDenError}"  style="margin-top:20px">
+                                    <h6 class="ng-binding" style="color: white; margin-bottom: 10px">GA ĐẾN</h6> <input type="text"
                                         class="form-control input-sm ng-pristine ng-valid"
                                         ng-model="searchData.tenGaDen" ng-change="verifyGa(searchData.tenGaDen, false)"
                                         autocomplete="off" typeahead-on-select="setMaGaDen($item)"
@@ -718,8 +719,8 @@
                                     </ul>
                                 </div>
 
-                                <div class="col-md-3">
-                                    <h6 class="ng-binding">NGÀY ĐI</h6>
+                                <div class="col-md-3"  style="margin-top:20px">
+                                    <h6 class="ng-binding" style="color: white; margin-bottom: 10px">NGÀY ĐI</h6>
                                     <div>
                                         <div class="input-group input-cal-picker">
                                             <input type="text"
@@ -1446,8 +1447,8 @@
                                     </div>
 
                                 </div>
-                                <div class="col-md-3">
-                                    <h6 class="ng-binding">NGÀY VỀ</h6><span class="control-label ng-binding ng-hide"
+                                <div class="col-md-3"   style="margin-top:20px">
+                                    <h6 class="ng-binding"  style="color: white; margin-bottom: 10px">NGÀY VỀ</h6><span class="control-label ng-binding ng-hide"
                                         ng-show="ngayVeError" ng-class="{'et-error-label': ngayDenError}">Ngày về không
                                         hợp
                                         lệ</span>
